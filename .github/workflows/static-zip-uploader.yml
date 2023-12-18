@@ -28,7 +28,7 @@ jobs:
       
       # Move Files
       - name: Move Files
-        run: find . -maxdepth 1 -type d ! -name "Snap.Static.Zip-main" -exec mv {} Snap.Static.Zip-main/ \;
+        run: mv ${{ github.workspace }}/*.zip ${{ github.workspace }}/Snap.Static.Zip-main/
       
       - name: Load secret
         uses: 1password/load-secrets-action@v1
