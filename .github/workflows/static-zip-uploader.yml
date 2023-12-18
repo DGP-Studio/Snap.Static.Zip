@@ -1,0 +1,49 @@
+name: Static Zip Uploader
+
+# 控制工作流程何时运行
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '.github/**'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  Publish:
+    # 控制工作流程的运行环境
+    runs-on: ubuntu-latest
+
+    # Steps 表示将作为作业的一部分执行的任务序列
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout Repo
+        uses: actions/checkout@v4 
+        
+      # Create Folder
+      - name: Create Work Folder
+        run: |
+          mkdir ${{ github.workspace }}/Snap.Static.Zip-main
+      
+      # Move Files
+      - name: Move Files
+        run: find . -maxdepth 1 -type d ! -name "Snap.Static.Zip-main" -exec mv {} Snap.Static.Zip-main/ \;
+      
+      - name: Load secret
+        uses: 1password/load-secrets-action@v1
+        with:
+          # Export loaded secrets as environment variables
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          ALIST_HOST: op://GitHub-Actions-Vault/static-test/host
+          ALIST_USERNAME: op://GitHub-Actions-Vault/static-test/username
+          ALIST_PASSWORD: op://GitHub-Actions-Vault/static-test/password
+          
+      # Upload to OSS
+      - name: Upload OD21
+        run: |
+          wget https://github.com/DGP-Automation/Static.Uploader/releases/latest/download/static-uploader
+          chmod +x ./static-uploader
+          ./static-uploader --zip --overwrite
