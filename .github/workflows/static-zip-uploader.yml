@@ -46,4 +46,4 @@ jobs:
         run: |
           wget https://github.com/DGP-Automation/Static.Uploader/releases/latest/download/static-uploader
           chmod +x ./static-uploader
-          ./static-uploader --type zip --target lz/ --overwrite
+          ./static-uploader --type zip --target /lz --overwrite
